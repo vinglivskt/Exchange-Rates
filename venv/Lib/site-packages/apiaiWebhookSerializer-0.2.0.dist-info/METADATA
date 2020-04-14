@@ -1,0 +1,14 @@
+Metadata-Version: 2.0
+Name: apiaiWebhookSerializer
+Version: 0.2.0
+Summary: Serialize Api.ai Webhook requests and responses to a proper python object
+Home-page: https://github.com/dusterherz/apiai-python-webhook-serializer
+Author: Aude Lejuez
+Author-email: audelejuez@gmail.com
+License: MIT
+Platform: UNKNOWN
+Requires-Dist: addict
+
+UNKNOWN
+
+

@@ -1,0 +1,13 @@
+README.rst
+setup.cfg
+setup.py
+apiai_assistant/__init__.py
+apiai_assistant/agent.py
+apiai_assistant/assistant.py
+apiai_assistant/corpus.py
+apiai_assistant/parser.py
+apiai_assistant/utils.py
+apiai_assistant.egg-info/PKG-INFO
+apiai_assistant.egg-info/SOURCES.txt
+apiai_assistant.egg-info/dependency_links.txt
+apiai_assistant.egg-info/top_level.txt
