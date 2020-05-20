@@ -35,8 +35,9 @@ def learn_menu():
     item1 = types.KeyboardButton("Узнать курс💵")
     item2 = types.KeyboardButton("Узнать курс🇺🇦")
     item3 = types.KeyboardButton("Узнать курс💶")
+    item4 = types.KeyboardButton("More")
     Back = types.KeyboardButton("Назад 🚪")
-    markup.add(item1, item2, item3, Back)
+    markup.add(item1, item2, item3, item4, Back)
     return markup
 
 
@@ -57,7 +58,6 @@ def transfer_menu():
     eu_us = types.KeyboardButton("EU ➡ US")
     eu_ru = types.KeyboardButton("EU ➡ RU")
     eu_ua = types.KeyboardButton("EU ➡ UA")
-
     Back = types.KeyboardButton("Назад 🚪")
     markup.add(us_ru, us_ua, us_eu, ru_us, ru_ua, ru_eu, ua_ru, ua_us, ua_eu, eu_us, eu_ru, eu_ua, Back)
     return markup
@@ -96,21 +96,37 @@ def vk(message):
                      reply_markup=markup)
 
 
+@bot.message_handler(commands=['oll'])
+def oll_transfer(message):
+    sti = open('static/Putin7.png', 'rb')
+    bot.send_sticker(message.chat.id, sti)
+    send = bot.send_message(message.chat.id,
+                            "Введите валюты заглавными буквами, следующим образом: ВАЛЮТА_ВАЛЮТА\nПример: USD_UAH")
+    bot.register_next_step_handler(send, oll)
+
+
 @bot.message_handler(content_types=['text'])
 def Menu_Change(message):
     if message.chat.type == 'private':
+
         if message.text == 'Актуальный курс🤑':
             sti = open('static/Putin2.jpg', 'rb')
             bot.send_sticker(message.chat.id, sti)
             bot.send_message(message.chat.id,
-                             "В данной категории вам предоставленная быстрая информация о курсе валют в рублях.".format(
+                             "В данной категории вам предоставленная быстрая информация о курсе валют в рублях,\n\n Так же возможность перевода\n любой валюты 1 к 1".format(
                                  message.from_user, bot.get_me()), parse_mode='html', reply_markup=learn_menu())
         elif message.text == 'Узнать курс💵':
-            bot.send_message(message.chat.id, toFixed(float(get_currency_price(url_us, 'rub')), 2))
+            bot.send_message(message.chat.id, toFixed(float(get_currency_price('USD_RUB')), 2))
         elif message.text == 'Узнать курс🇺🇦':
-            bot.send_message(message.chat.id, toFixed(float(get_currency_price(url_ua, 'rub')), 2))
+            bot.send_message(message.chat.id, toFixed(float(get_currency_price('UAH_RUB')), 2))
         elif message.text == 'Узнать курс💶':
-            bot.send_message(message.chat.id, toFixed(float(get_currency_price(url_eu, 'rub')), 2))
+            bot.send_message(message.chat.id, toFixed(float(get_currency_price('EUR_RUB')), 2))
+        elif message.text == 'More':
+            sti = open('static/Putin7.png', 'rb')
+            bot.send_sticker(message.chat.id, sti)
+            send = bot.send_message(message.chat.id,
+                                    "Введите валюты заглавными буквами, как в примере. Пример: USD_UAH")
+            bot.register_next_step_handler(send, oll)
         elif message.text == 'Назад 🚪':
             bot.send_message(message.chat.id,
                              "Вы вернулись на начальную страницу. Не звбывайте проверять актуальный курс валют 😊".format(
@@ -185,136 +201,168 @@ def Menu_Change(message):
             bot.register_next_step_handler(send_eur_ua, eur_ua)
 
 
+
 def usd_ru(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в рублях = " + sum(float(last), get_currency_price(url_us, 'rub')))
+                         "Полученная сумма в рублях = " + sum(float(last), get_currency_price('USD_RUB')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def eur_ru(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в рублях = " + sum(float(last), get_currency_price(url_eu, 'rub')))
+                         "Полученная сумма в рублях = " + sum(float(last), get_currency_price('EUR_RUB')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def usd_eur(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в евро = " + sum(float(last), get_currency_price(url_us, 'eur')))
+                         "Полученная сумма в евро = " + sum(float(last), get_currency_price('USD_EUR')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def ru_usd(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в долларах = " + sum(float(last), get_currency_price(url_ru, 'usd')))
+                         "Полученная сумма в долларах = " + sum(float(last), get_currency_price('RUB_USD')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def eur_usd(message):
     try:
+
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в долларах = " + sum(float(last), get_currency_price(url_eu, 'usd')))
+                         "Полученная сумма в долларах = " + sum(float(last), get_currency_price('EUR_USD')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def ru_eur(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в евро = " + sum(float(last), get_currency_price(url_ru, 'eur')))
+                         "Полученная сумма в евро = " + sum(float(last), get_currency_price('RUB_EUR')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def ua_ru(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в рублях = " + sum(float(last), get_currency_price(url_ua, 'rub')))
+                         "Полученная сумма в рублях = " + sum(float(last), get_currency_price('UAH_RUB')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def ru_ua(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в гривнах = " + sum(float(last), get_currency_price(url_ru, 'uah')))
+                         "Полученная сумма в гривнах = " + sum(float(last), get_currency_price('RUB_UAH')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def eur_ua(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в гривнах = " + sum(float(last), get_currency_price(url_eu, 'uah')))
+                         "Полученная сумма в гривнах = " + sum(float(last), get_currency_price('EUR_UAH')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def usd_ua(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в гривнах = " + sum(float(last), get_currency_price(url_us, 'uah')))
+                         "Полученная сумма в гривнах = " + sum(float(last), get_currency_price('USD_UAH')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def ua_usd(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в долларах = " + sum(float(last), get_currency_price(url_ua, 'usd')))
+                         "Полученная сумма в долларах = " + sum(float(last), get_currency_price('UAH_USD')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
 
 
 def ua_eur(message):
     try:
         last = message.text.split()[0]
         bot.send_message(message.chat.id,
-                         "Полученная сумма в евро = " + sum(float(last), get_currency_price(url_ua, 'eur')))
+                         "Полученная сумма в евро = " + sum(float(last), get_currency_price('UAH_EUR')))
     except ValueError:
-        sti = open('static/Putin3.jpg', 'rb')
-        bot.send_sticker(message.chat.id, sti)
-        bot.send_message(message.chat.id, oops())
+        error(message)
+    except AttributeError:
+        error(message)
+
+
+def error(message):
+    sti = open('static/Putin3.jpg', 'rb')
+    bot.send_sticker(message.chat.id, sti)
+    bot.send_message(message.chat.id, oops())
+
+
+def oll(message):
+    try:
+        last = str(message.text.split()[0])
+        bot.send_message(message.chat.id,
+                                   "Полученная сумма перевода " + last + " = " + toFixed(float(get_currency_price(last)), 2))
+    except ValueError:
+        error(message)
+    except AttributeError:
+        error(message)
+    except KeyError:
+        error(message)
+
+# #
+# def oll_exit(message):
+#     try:
+#         last = message.text.split()[0]
+#         bot.send_message(message.chat.id,
+#                          "Полученная сумма в евро = " + last)
+#     except ValueError:
+#         error(message)
+#     except AttributeError:
+#         error(message)
 
 
 # RUN
